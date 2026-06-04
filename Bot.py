@@ -36,8 +36,6 @@ os.makedirs(DATA_DIR, exist_ok=True)
 
 # Bot links
 BOT_MAIN    = "https://t.me/evalonwinnersbot"
-BOT_SHARE   = "https://t.me/kentehsharevvipbot"
-BOT_TRADING = "https://t.me/evalonaitrading_bot"
 
 # ============================================================
 # DATABASE
@@ -179,8 +177,6 @@ ADMIN_ID   = 8535925646
 
 # Bot links
 BOT_MAIN    = "https://t.me/evalonwinnersbot"
-BOT_SHARE   = "https://t.me/kentehsharevvipbot"
-BOT_TRADING = "https://t.me/evalonaitrading_bot"
 
 WATERMARK_TEXT = "EVALON WINNERS BOT"
 
@@ -226,250 +222,611 @@ async def download_photo(bot: Bot, file_id: str) -> bytes:
     return bytes(await file.download_as_bytearray())
 
 # ============================================================
-# BUTTONS — per service
+# BUTTONS â€” per service
 # ============================================================
 def make_keyboard(service: str) -> InlineKeyboardMarkup:
-    """3 buttons on every post. First button label changes per service. No usernames visible."""
-    labels = {
-        "vip_signals":      "👑 Join VIP Now",
-        "auto_trading_bot": "🤖 Start Auto Trading",
-        "social_trading":   "✨ Start Social Copy",
-        "manual_bot":       "🎁 Claim Free Bot",
-        "indicators":       "📊 Get Indicators",
-        "spin_invite":      "🎰 Spin & Save 70%",
+    """1 button per post. Label and deep-link param change per service."""
+    SERVICE_BUTTONS = {
+        "vip_signals":      ("ðŸ‘‘ Join VIP Now",        "vip"),
+        "auto_trading_bot": ("ðŸ¤– Start Auto Trading",  "auto"),
+        "social_trading":   ("âœ¨ Start Social Copy",   "copy"),
+        "manual_bot":       ("ðŸŽ Claim Free Bot",      "freebooters"),
+        "indicators":       ("ðŸ“Š Get Indicators",      "indicator"),
+        "spin_invite":      ("ðŸŽ° Spin & Save 70%",     "spin"),
     }
-    first = labels.get(service, "👑 Access Now")
+    label, param = SERVICE_BUTTONS.get(service, ("ðŸ‘‘ Access Now", "vip"))
+    url = f"{BOT_MAIN}?start={param}"
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton(first,                url=BOT_MAIN)],
-        [InlineKeyboardButton("🎁 Claim Free Bot",  url=BOT_SHARE)],
-        [InlineKeyboardButton("🤖 Start Auto Trading", url=BOT_TRADING)],
+        [InlineKeyboardButton(label, url=url)],
     ])
 
 def make_broadcast_keyboard() -> InlineKeyboardMarkup:
-    """Same 3 buttons for admin broadcast posts."""
+    """Single button for admin broadcast posts."""
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("👑 Join VIP Now",       url=BOT_MAIN)],
-        [InlineKeyboardButton("🎁 Claim Free Bot",     url=BOT_SHARE)],
-        [InlineKeyboardButton("🤖 Start Auto Trading", url=BOT_TRADING)],
+        [InlineKeyboardButton("ðŸ‘‘ Join VIP Now", url=f"{BOT_MAIN}?start=vip")],
     ])
 
 # ============================================================
-# POST CONTENT — 6 SERVICES (no @mention in text, button handles it)
+# POST CONTENT â€” 6 SERVICES (no @mention in text, button handles it)
 # ============================================================
 POSTS = {
 
     "vip_signals": [
         (
-            "📊 *EVALON VIP SIGNALS*\n\n"
-            "🔥 *Non-Martingale signals only*\n\n"
-            "✅ 8 to 10 signals per day\n"
-            "✅ Monday to Friday — consistent delivery\n"
-            "✅ BUY/SELL direction with expiry time\n"
-            "✅ WIN/LOSS results after every trade\n"
-            "✅ High accuracy entries — no guessing\n\n"
-            "💎 Trade smarter. Follow the signal."
+            "ðŸ“Š *EVALON VIP SIGNALS*\n\n"
+            "ðŸ”¥ *Non-Martingale signals only*\n\n"
+            "âœ… 8 to 10 signals per day\n"
+            "âœ… Monday to Friday â€” consistent delivery\n"
+            "âœ… BUY/SELL direction with expiry time\n"
+            "âœ… WIN/LOSS results after every trade\n"
+            "âœ… High accuracy entries â€” no guessing\n\n"
+            "ðŸ’Ž Trade smarter. Follow the signal."
         ),
         (
-            "⚡ *TIRED OF LOSING TRADES?*\n\n"
+            "âš¡ *TIRED OF LOSING TRADES?*\n\n"
             "Switch to *EVALON VIP SIGNALS*\n\n"
-            "📈 8–10 clean signals every trading day\n"
-            "🎯 Non-Martingale — no dangerous recovery trades\n"
-            "📲 Signals delivered directly to your Telegram\n"
-            "✅ Monday to Friday, session by session\n\n"
+            "ðŸ“ˆ 8â€“10 clean signals every trading day\n"
+            "ðŸŽ¯ Non-Martingale â€” no dangerous recovery trades\n"
+            "ðŸ“² Signals delivered directly to your Telegram\n"
+            "âœ… Monday to Friday, session by session\n\n"
             "Stop guessing. Start winning."
         ),
         (
-            "🏆 *EVALON VIP SIGNALS — THE DIFFERENCE*\n\n"
+            "ðŸ† *EVALON VIP SIGNALS â€” THE DIFFERENCE*\n\n"
             "While others use Martingale and blow accounts...\n\n"
             "We use *pure strategy*:\n"
-            "📊 8–10 signals daily\n"
-            "🎯 Non-Martingale — protect your capital\n"
-            "⏰ Mon–Fri, every session\n"
-            "📲 Real results. WIN/LOSS every trade\n\n"
+            "ðŸ“Š 8â€“10 signals daily\n"
+            "ðŸŽ¯ Non-Martingale â€” protect your capital\n"
+            "â° Monâ€“Fri, every session\n"
+            "ðŸ“² Real results. WIN/LOSS every trade\n\n"
             "Your capital deserves better."
         ),
         (
-            "📲 *EVALON VIP SIGNALS*\n\n"
+            "ðŸ“² *EVALON VIP SIGNALS*\n\n"
             "Every weekday you get:\n\n"
-            "🔔 Signal notification\n"
-            "📈 Asset + direction + expiry\n"
-            "✅ Result after every trade\n\n"
-            "🎯 *Non-Martingale only* — clean and safe\n"
-            "🗓 Monday to Friday — 8 to 10 signals per session\n\n"
+            "ðŸ”” Signal notification\n"
+            "ðŸ“ˆ Asset + direction + expiry\n"
+            "âœ… Result after every trade\n\n"
+            "ðŸŽ¯ *Non-Martingale only* â€” clean and safe\n"
+            "ðŸ—“ Monday to Friday â€” 8 to 10 signals per session\n\n"
             "Your edge in the market starts here."
+        ),
+        (
+            "ðŸ’¬ *Quick question.*\n"
+            "\n"
+            "How many trades did you lose this week because you had no plan?\n"
+            "\n"
+            "Our VIP members don't guess.\n"
+            "They follow a signal â€” entry, direction, expiry.\n"
+            "Then wait for the result.\n"
+            "\n"
+            "That's it. No stress. No confusion.\n"
+            "\n"
+            "Ready to trade with a plan? ðŸ‘‡"
+        ),
+        (
+            "ðŸŒ… *Morning check-in.*\n"
+            "\n"
+            "The market is open.\n"
+            "Signals are being prepared.\n"
+            "\n"
+            "VIP members already know what to trade today.\n"
+            "Do you?\n"
+            "\n"
+            "8â€“10 signals. Non-Martingale. Monâ€“Fri.\n"
+            "Your edge starts here ðŸ‘‡"
+        ),
+        (
+            "ðŸŒ™ *End of session.*\n"
+            "\n"
+            "Another trading day is closing.\n"
+            "\n"
+            "VIP members followed their signals.\n"
+            "Logged their results.\n"
+            "Closed their charts.\n"
+            "\n"
+            "No stress. No revenge trading. No blown accounts.\n"
+            "\n"
+            "That's what a system does for you.\n"
+            "Join before tomorrow's session ðŸ‘‡"
+        ),
+        (
+            "ðŸ“Œ *One thing separates profitable traders from the rest.*\n"
+            "\n"
+            "A consistent entry strategy.\n"
+            "\n"
+            "Not luck.\n"
+            "Not more screen time.\n"
+            "Not a bigger deposit.\n"
+            "\n"
+            "Just clean, consistent signals â€” followed with discipline.\n"
+            "\n"
+            "EVALON VIP gives you exactly that ðŸ‘‡"
+        ),
+        (
+            "ðŸŽ¯ *What does a VIP signal look like?*\n"
+            "\n"
+            "ðŸ“Š Asset: EUR/USD OTC\n"
+            "ðŸ“ˆ Direction: CALL â¬†ï¸\n"
+            "â± Expiry: 5 minutes\n"
+            "\n"
+            "That's all you need.\n"
+            "No analysis. No confusion.\n"
+            "Just follow and wait.\n"
+            "\n"
+            "8â€“10 of these every trading day ðŸ‘‡"
         ),
     ],
 
     "auto_trading_bot": [
         (
-            "🤖 *EVALON AUTO TRADING BOT*\n\n"
+            "ðŸ¤– *EVALON AUTO TRADING BOT*\n\n"
             "Set it. Forget it. Profit.\n\n"
-            "✅ Works on *ALL brokers*\n"
-            "✅ Non-Martingale strategy built in\n"
-            "✅ Stop Loss & Take Profit settings\n"
-            "✅ Compounding settings available\n"
-            "📈 *87% to 95% accuracy*\n\n"
+            "âœ… Works on *ALL brokers*\n"
+            "âœ… Non-Martingale strategy built in\n"
+            "âœ… Stop Loss & Take Profit settings\n"
+            "âœ… Compounding settings available\n"
+            "ðŸ“ˆ *87% to 95% accuracy*\n\n"
             "Let the bot trade while you live your life."
         ),
         (
-            "⚙️ *TRADE AUTOMATICALLY WITH EVALON BOT*\n\n"
+            "âš™ï¸ *TRADE AUTOMATICALLY WITH EVALON BOT*\n\n"
             "No screen time needed.\n\n"
-            "🤖 Fully automated trading\n"
-            "🔒 Stop Loss protection\n"
-            "💰 Take Profit settings\n"
-            "📈 Compounding to grow your account\n"
-            "🌐 *All brokers supported*\n"
-            "🎯 87–95% accuracy\n\n"
+            "ðŸ¤– Fully automated trading\n"
+            "ðŸ”’ Stop Loss protection\n"
+            "ðŸ’° Take Profit settings\n"
+            "ðŸ“ˆ Compounding to grow your account\n"
+            "ðŸŒ *All brokers supported*\n"
+            "ðŸŽ¯ 87â€“95% accuracy\n\n"
             "Your account works even when you sleep."
         ),
         (
-            "💰 *WANT YOUR MONEY WORKING FOR YOU?*\n\n"
+            "ðŸ’° *WANT YOUR MONEY WORKING FOR YOU?*\n\n"
             "*EVALON Auto Trading Bot* does exactly that.\n\n"
-            "✅ All brokers — no restrictions\n"
-            "✅ Non-Martingale — capital protected\n"
-            "✅ Customizable Stop & Take Profit\n"
-            "✅ Compounding settings\n"
-            "✅ 87–95% accuracy record\n\n"
+            "âœ… All brokers â€” no restrictions\n"
+            "âœ… Non-Martingale â€” capital protected\n"
+            "âœ… Customizable Stop & Take Profit\n"
+            "âœ… Compounding settings\n"
+            "âœ… 87â€“95% accuracy record\n\n"
             "Set up once. Earn consistently."
         ),
         (
-            "🌐 *ALL BROKERS. ONE BOT.*\n\n"
+            "ðŸŒ *ALL BROKERS. ONE BOT.*\n\n"
             "EVALON Auto Trading Bot supports every major broker.\n\n"
-            "📊 Non-Martingale strategy\n"
-            "🔒 Built-in Stop Loss & Take Profit\n"
-            "📈 87–95% accuracy\n"
-            "💹 Compounding mode to scale profits\n\n"
+            "ðŸ“Š Non-Martingale strategy\n"
+            "ðŸ”’ Built-in Stop Loss & Take Profit\n"
+            "ðŸ“ˆ 87â€“95% accuracy\n"
+            "ðŸ’¹ Compounding mode to scale profits\n\n"
             "Start automated trading today."
+        ),
+        (
+            "ðŸ’¬ *Be honest.*\n"
+            "\n"
+            "How much time do you spend watching charts every day?\n"
+            "\n"
+            "2 hours? 4 hours? More?\n"
+            "\n"
+            "EVALON Auto Bot handles it all.\n"
+            "You set it up once â€” it runs, trades, and manages risk.\n"
+            "\n"
+            "Your time is worth more than a screen ðŸ‘‡"
+        ),
+        (
+            "ðŸŒ… *While you were sleeping last night...*\n"
+            "\n"
+            "Our Auto Trading Bot was running.\n"
+            "\n"
+            "âœ… Scanning the market\n"
+            "âœ… Placing trades\n"
+            "âœ… Managing Stop Loss\n"
+            "âœ… Protecting your capital\n"
+            "\n"
+            "Automated. Consistent. Safe.\n"
+            "Set it up today ðŸ‘‡"
+        ),
+        (
+            "ðŸ”’ *The biggest fear in trading?*\n"
+            "\n"
+            "Losing more than you planned.\n"
+            "\n"
+            "That's why EVALON Auto Bot has:\n"
+            "ðŸ›‘ Stop Loss â€” cuts losses automatically\n"
+            "ðŸ’° Take Profit â€” locks in gains\n"
+            "ðŸ“ˆ Compounding â€” grows your account steadily\n"
+            "\n"
+            "Risk managed. Always ðŸ‘‡"
+        ),
+        (
+            "ðŸ“Š *87â€“95% accuracy.*\n"
+            "\n"
+            "That's the track record of EVALON Auto Trading Bot.\n"
+            "\n"
+            "Not a promise.\n"
+            "Not a guess.\n"
+            "A result â€” built on Non-Martingale strategy and consistent execution.\n"
+            "\n"
+            "All brokers supported. Start today ðŸ‘‡"
+        ),
+        (
+            "âš™ï¸ *Setup takes less than 5 minutes.*\n"
+            "\n"
+            "1ï¸âƒ£ Open the bot\n"
+            "2ï¸âƒ£ Connect your broker\n"
+            "3ï¸âƒ£ Set your Stop Loss & Take Profit\n"
+            "4ï¸âƒ£ Start\n"
+            "\n"
+            "That's it.\n"
+            "The bot does the rest â€” 24/7.\n"
+            "\n"
+            "Works on ALL brokers ðŸ‘‡"
         ),
     ],
 
     "social_trading": [
         (
-            "🔗 *EVALON SOCIAL TRADING — POCKET OPTION*\n\n"
+            "ðŸ”— *EVALON SOCIAL TRADING â€” POCKET OPTION*\n\n"
             "Don't trade alone. Copy a proven account.\n\n"
-            "✅ Copy trades directly from our Pocket Option account\n"
-            "📅 *Monday to Monday* — no weekends off\n"
-            "🌙 OTC trading included — 24/7 coverage\n"
-            "📲 Everything automated — just connect and earn\n\n"
+            "âœ… Copy trades directly from our Pocket Option account\n"
+            "ðŸ“… *Monday to Monday* â€” no weekends off\n"
+            "ðŸŒ™ OTC trading included â€” 24/7 coverage\n"
+            "ðŸ“² Everything automated â€” just connect and earn\n\n"
             "The simplest way to profit from trading."
         ),
         (
-            "📋 *COPY TRADING — EVALON SOCIAL TRADING*\n\n"
+            "ðŸ“‹ *COPY TRADING â€” EVALON SOCIAL TRADING*\n\n"
             "What we trade, you trade. Automatically.\n\n"
-            "🎯 Pocket Option platform\n"
-            "📅 7 days a week — Monday to Monday\n"
-            "🌙 OTC markets included — no downtime\n"
-            "✅ No experience needed — just copy\n\n"
+            "ðŸŽ¯ Pocket Option platform\n"
+            "ðŸ“… 7 days a week â€” Monday to Monday\n"
+            "ðŸŒ™ OTC markets included â€” no downtime\n"
+            "âœ… No experience needed â€” just copy\n\n"
             "Your account mirrors our trades in real time."
         ),
         (
-            "🌙 *TRADING DOESN'T STOP — NEITHER DO WE*\n\n"
+            "ðŸŒ™ *TRADING DOESN'T STOP â€” NEITHER DO WE*\n\n"
             "*EVALON Social Trading on Pocket Option*\n\n"
-            "📅 Active Monday to Monday\n"
-            "🌙 OTC included — weekends too\n"
-            "🔗 Auto-copy every trade we make\n"
-            "✅ Pocket Option account required\n\n"
+            "ðŸ“… Active Monday to Monday\n"
+            "ðŸŒ™ OTC included â€” weekends too\n"
+            "ðŸ”— Auto-copy every trade we make\n"
+            "âœ… Pocket Option account required\n\n"
             "While others rest, your account keeps growing."
         ),
         (
-            "💡 *NEW TO TRADING? START HERE.*\n\n"
-            "*EVALON Social Trading* — copy without learning.\n\n"
-            "✅ Connect your Pocket Option account\n"
-            "✅ Our trades copy to yours automatically\n"
-            "📅 7 days a week including OTC\n"
-            "🎯 No analysis needed — we do it for you\n\n"
+            "ðŸ’¡ *NEW TO TRADING? START HERE.*\n\n"
+            "*EVALON Social Trading* â€” copy without learning.\n\n"
+            "âœ… Connect your Pocket Option account\n"
+            "âœ… Our trades copy to yours automatically\n"
+            "ðŸ“… 7 days a week including OTC\n"
+            "ðŸŽ¯ No analysis needed â€” we do it for you\n\n"
             "Your easiest path to consistent profits."
+        ),
+        (
+            "ðŸ’¬ *What if you could profit from trading...*\n"
+            "\n"
+            "Without knowing how to trade?\n"
+            "\n"
+            "That's exactly what EVALON Social Trading does.\n"
+            "\n"
+            "Our Pocket Option account trades.\n"
+            "Your account copies â€” automatically.\n"
+            "\n"
+            "No experience needed. No charts. No stress ðŸ‘‡"
+        ),
+        (
+            "ðŸŒ™ *It's the weekend.*\n"
+            "\n"
+            "Most traders are offline.\n"
+            "\n"
+            "But EVALON Social Trading?\n"
+            "Still running.\n"
+            "\n"
+            "OTC markets are open.\n"
+            "Your account is still copying trades.\n"
+            "Monday to Monday â€” no breaks.\n"
+            "\n"
+            "Set it and forget it ðŸ‘‡"
+        ),
+        (
+            "ðŸ“‹ *Copy trading â€” simplified.*\n"
+            "\n"
+            "You don't need to:\n"
+            "âŒ Analyze charts\n"
+            "âŒ Read indicators\n"
+            "âŒ Know entry strategies\n"
+            "\n"
+            "You just need to:\n"
+            "âœ… Connect your Pocket Option account\n"
+            "âœ… Let EVALON do the rest\n"
+            "\n"
+            "That's the whole process ðŸ‘‡"
+        ),
+        (
+            "ðŸ• *How much time does copy trading take?*\n"
+            "\n"
+            "Setup: 5 minutes.\n"
+            "Daily management: 0 minutes.\n"
+            "\n"
+            "EVALON Social Trading runs itself.\n"
+            "OTC included â€” active 7 days a week.\n"
+            "\n"
+            "Your easiest trading decision ðŸ‘‡"
+        ),
+        (
+            "ðŸ”— *One connection. Endless trades.*\n"
+            "\n"
+            "Link your Pocket Option account to EVALON Social Trading.\n"
+            "\n"
+            "Every trade we place â€” you get it too.\n"
+            "Same entry. Same direction. Same result.\n"
+            "\n"
+            "Monday to Monday. OTC included.\n"
+            "No screen time required ðŸ‘‡"
         ),
     ],
 
     "manual_bot": [
         (
-            "🎁 *EVALON MANUAL BOT — FREE ACCESS*\n\n"
+            "ðŸŽ *EVALON MANUAL BOT â€” FREE ACCESS*\n\n"
             "Get it simply by registering through our broker links.\n\n"
-            "✅ Register via our bot using partner broker links\n"
-            "✅ Manual bot access activated automatically\n"
-            "🔗 Multiple brokers available\n"
-            "📲 Everything handled inside the bot\n\n"
+            "âœ… Register via our bot using partner broker links\n"
+            "âœ… Manual bot access activated automatically\n"
+            "ðŸ”— Multiple brokers available\n"
+            "ðŸ“² Everything handled inside the bot\n\n"
             "The easiest free tool you'll get today."
         ),
         (
-            "🤝 *REGISTER. GET THE BOT. START TRADING.*\n\n"
-            "*EVALON Manual Bot* — yours when you sign up.\n\n"
-            "📋 Sign up through broker links inside our bot\n"
-            "✅ Manual bot unlocked instantly\n"
-            "🌐 Multiple supported brokers\n"
-            "💰 Zero extra cost — just register\n\n"
+            "ðŸ¤ *REGISTER. GET THE BOT. START TRADING.*\n\n"
+            "*EVALON Manual Bot* â€” yours when you sign up.\n\n"
+            "ðŸ“‹ Sign up through broker links inside our bot\n"
+            "âœ… Manual bot unlocked instantly\n"
+            "ðŸŒ Multiple supported brokers\n"
+            "ðŸ’° Zero extra cost â€” just register\n\n"
             "Free access. Real results."
         ),
         (
-            "🔓 *UNLOCK THE EVALON MANUAL BOT*\n\n"
+            "ðŸ”“ *UNLOCK THE EVALON MANUAL BOT*\n\n"
             "No purchase needed.\n\n"
-            "1️⃣ Open our bot\n"
-            "2️⃣ Register via a broker link\n"
-            "3️⃣ Manual bot access — activated ✅\n\n"
+            "1ï¸âƒ£ Open our bot\n"
+            "2ï¸âƒ£ Register via a broker link\n"
+            "3ï¸âƒ£ Manual bot access â€” activated âœ…\n\n"
             "Simple. Fast. Free."
+        ),
+        (
+            "ðŸ’¬ *Did you know?*\n"
+            "\n"
+            "You can get the EVALON Manual Bot completely free.\n"
+            "\n"
+            "No payment needed.\n"
+            "Just register with a broker through our bot.\n"
+            "\n"
+            "Takes 3 minutes.\n"
+            "Access unlocks instantly.\n"
+            "\n"
+            "The free tool most traders don't know about ðŸ‘‡"
+        ),
+        (
+            "ðŸ¤” *Why pay for a bot when you can get one free?*\n"
+            "\n"
+            "EVALON Manual Bot is unlocked the moment you:\n"
+            "\n"
+            "1ï¸âƒ£ Open our bot\n"
+            "2ï¸âƒ£ Register via any partner broker link\n"
+            "3ï¸âƒ£ Done â€” bot activated âœ…\n"
+            "\n"
+            "Multiple brokers available.\n"
+            "Zero cost. Real access ðŸ‘‡"
+        ),
+        (
+            "â± *3 minutes from now...*\n"
+            "\n"
+            "You could have access to the EVALON Manual Bot.\n"
+            "\n"
+            "Register via a broker link inside our bot.\n"
+            "Access activates automatically.\n"
+            "No waiting. No payment.\n"
+            "\n"
+            "Simplest free tool in trading ðŸ‘‡"
+        ),
+        (
+            "ðŸŒ *Multiple brokers. One bot.*\n"
+            "\n"
+            "EVALON Manual Bot works across our partner brokers.\n"
+            "\n"
+            "Register through any of them â€” inside our bot.\n"
+            "Manual bot access is yours immediately.\n"
+            "\n"
+            "Pick your broker. Start trading.\n"
+            "It's completely free ðŸ‘‡"
+        ),
+        (
+            "ðŸŽ *Free doesn't mean basic.*\n"
+            "\n"
+            "EVALON Manual Bot gives you:\n"
+            "\n"
+            "âœ… Manual trading signals\n"
+            "âœ… Entry guidance\n"
+            "âœ… Broker access through one place\n"
+            "\n"
+            "All for registering through our partner link.\n"
+            "Start here ðŸ‘‡"
         ),
     ],
 
     "indicators": [
         (
-            "📉 *EVALON INDICATORS*\n\n"
+            "ðŸ“‰ *EVALON INDICATORS*\n\n"
             "Available on *MT4, MT5 & TradingView*\n\n"
-            "✅ *Non-repaint* — what you see is what you get\n"
-            "✅ Get access with any Evalon service\n"
-            "📊 Works on all major pairs and assets\n"
-            "🎯 Precise entry signals on your chart\n\n"
+            "âœ… *Non-repaint* â€” what you see is what you get\n"
+            "âœ… Get access with any Evalon service\n"
+            "ðŸ“Š Works on all major pairs and assets\n"
+            "ðŸŽ¯ Precise entry signals on your chart\n\n"
             "See the market clearly. Trade with confidence."
         ),
         (
-            "📊 *NON-REPAINT INDICATORS — MT4, MT5, TRADINGVIEW*\n\n"
+            "ðŸ“Š *NON-REPAINT INDICATORS â€” MT4, MT5, TRADINGVIEW*\n\n"
             "No more signals that disappear after the fact.\n\n"
-            "✅ Evalon Indicators never repaint\n"
-            "✅ Available on all 3 platforms\n"
-            "🎁 Included when you join any Evalon service\n\n"
+            "âœ… Evalon Indicators never repaint\n"
+            "âœ… Available on all 3 platforms\n"
+            "ðŸŽ Included when you join any Evalon service\n\n"
             "Trade what you see. Every time."
         ),
         (
-            "🖥️ *TRADINGVIEW • MT4 • MT5*\n\n"
-            "*EVALON Indicators* — on every platform you use.\n\n"
-            "📌 Non-repaint signals on your chart\n"
-            "✅ No confusion — clear BUY/SELL\n"
-            "🎁 Access granted with any Evalon service\n\n"
+            "ðŸ–¥ï¸ *TRADINGVIEW â€¢ MT4 â€¢ MT5*\n\n"
+            "*EVALON Indicators* â€” on every platform you use.\n\n"
+            "ðŸ“Œ Non-repaint signals on your chart\n"
+            "âœ… No confusion â€” clear BUY/SELL\n"
+            "ðŸŽ Access granted with any Evalon service\n\n"
             "Your charts. Our precision."
+        ),
+        (
+            "ðŸ’¬ *Ever placed a trade...*\n"
+            "\n"
+            "Then watched the signal disappear from your chart?\n"
+            "\n"
+            "That's a repainting indicator.\n"
+            "It changes history â€” so it always looks right after the fact.\n"
+            "\n"
+            "EVALON Indicators never repaint.\n"
+            "What you see is exactly what happened ðŸ‘‡"
+        ),
+        (
+            "ðŸ–¥ï¸ *Which platform do you use?*\n"
+            "\n"
+            "MT4 âœ…\n"
+            "MT5 âœ…\n"
+            "TradingView âœ…\n"
+            "\n"
+            "EVALON Indicators work on all three.\n"
+            "Non-repaint. Clear BUY/SELL signals.\n"
+            "Included with any Evalon service ðŸ‘‡"
+        ),
+        (
+            "ðŸ“Œ *A good indicator does one thing well.*\n"
+            "\n"
+            "It tells you when to enter.\n"
+            "\n"
+            "Not maybe.\n"
+            "Not 'it depends'.\n"
+            "A clear signal â€” on your chart â€” right when you need it.\n"
+            "\n"
+            "EVALON Indicators are built for exactly that.\n"
+            "MT4, MT5 & TradingView ðŸ‘‡"
+        ),
+        (
+            "ðŸŽ¯ *Precision matters in trading.*\n"
+            "\n"
+            "A signal that repaints is worse than no signal.\n"
+            "It gives you false confidence.\n"
+            "\n"
+            "EVALON Indicators are built different:\n"
+            "âœ… Non-repaint â€” locked when candle closes\n"
+            "âœ… Works across all major assets\n"
+            "âœ… Available on 3 platforms\n"
+            "\n"
+            "See the market clearly ðŸ‘‡"
+        ),
+        (
+            "ðŸ“Š *Indicators that work with you â€” not against you.*\n"
+            "\n"
+            "No clutter. No confusion.\n"
+            "\n"
+            "Just clean entry signals on your chart.\n"
+            "Non-repaint. Multi-platform.\n"
+            "Included free with any Evalon service.\n"
+            "\n"
+            "MT4 â€¢ MT5 â€¢ TradingView ðŸ‘‡"
         ),
     ],
 
     "spin_invite": [
         (
-            "🎰 *SPIN & INVITE — SAVE UP TO 70%*\n\n"
+            "ðŸŽ° *SPIN & INVITE â€” SAVE UP TO 70%*\n\n"
             "Our services don't have to cost full price.\n\n"
-            "🎯 Spin to win discounts on any Evalon service\n"
-            "👥 Invite friends and unlock more savings\n"
-            "💸 Up to *70% off* on VIP, Bots, Social Trading & more\n\n"
+            "ðŸŽ¯ Spin to win discounts on any Evalon service\n"
+            "ðŸ‘¥ Invite friends and unlock more savings\n"
+            "ðŸ’¸ Up to *70% off* on VIP, Bots, Social Trading & more\n\n"
             "Why pay full price when you don't have to?"
         ),
         (
-            "💸 *GET EVALON SERVICES FOR LESS*\n\n"
-            "*Spin & Invite* — your shortcut to big discounts.\n\n"
-            "🎰 Spin inside the bot for instant discounts\n"
-            "📲 Invite a friend — unlock more savings\n"
-            "🏷️ Up to 70% off any service\n\n"
+            "ðŸ’¸ *GET EVALON SERVICES FOR LESS*\n\n"
+            "*Spin & Invite* â€” your shortcut to big discounts.\n\n"
+            "ðŸŽ° Spin inside the bot for instant discounts\n"
+            "ðŸ“² Invite a friend â€” unlock more savings\n"
+            "ðŸ·ï¸ Up to 70% off any service\n\n"
             "VIP. Auto Bot. Social Trading. Indicators.\n"
-            "All discounted — all accessible."
+            "All discounted â€” all accessible."
         ),
         (
-            "👥 *INVITE FRIENDS. SAVE BIG.*\n\n"
+            "ðŸ‘¥ *INVITE FRIENDS. SAVE BIG.*\n\n"
             "*EVALON Spin & Invite Access*\n\n"
-            "🎰 Spin for surprise discounts\n"
-            "🤝 Refer friends and save even more\n"
-            "💸 Discounts up to *70%* on all services\n\n"
+            "ðŸŽ° Spin for surprise discounts\n"
+            "ðŸ¤ Refer friends and save even more\n"
+            "ðŸ’¸ Discounts up to *70%* on all services\n\n"
             "The more you share, the less you pay."
+        ),
+        (
+            "ðŸ’¬ *Quick tip.*\n"
+            "\n"
+            "Before you pay full price for any EVALON service â€”\n"
+            "open the bot and spin first.\n"
+            "\n"
+            "You might get 20%, 40%, even 70% off.\n"
+            "Takes 10 seconds.\n"
+            "\n"
+            "Why pay more than you have to? ðŸ‘‡"
+        ),
+        (
+            "ðŸ‘¥ *Know someone who wants to start trading?*\n"
+            "\n"
+            "Invite them through EVALON.\n"
+            "\n"
+            "They get access to our services.\n"
+            "You unlock deeper discounts â€” up to 70% off.\n"
+            "\n"
+            "Share the opportunity.\n"
+            "Save together ðŸ‘‡"
+        ),
+        (
+            "ðŸŽ° *Not ready to pay full price yet?*\n"
+            "\n"
+            "That's fine.\n"
+            "\n"
+            "Spin inside the bot â€” you might not have to.\n"
+            "\n"
+            "Discounts on:\n"
+            "ðŸ‘‘ VIP Signals\n"
+            "ðŸ¤– Auto Trading Bot\n"
+            "âœ¨ Social Copy Trading\n"
+            "ðŸ“Š Indicators\n"
+            "\n"
+            "One spin. Real savings ðŸ‘‡"
+        ),
+        (
+            "ðŸ’¸ *The math is simple.*\n"
+            "\n"
+            "Invite 1 friend â†’ unlock a discount.\n"
+            "Invite more â†’ save more.\n"
+            "Spin the wheel â†’ instant discount.\n"
+            "\n"
+            "Up to 70% off any EVALON service.\n"
+            "\n"
+            "Most people never use this.\n"
+            "You should ðŸ‘‡"
+        ),
+        (
+            "ðŸ·ï¸ *Discounts don't last forever.*\n"
+            "\n"
+            "EVALON services are available at full price anytime.\n"
+            "But discounts â€” those come from spinning and inviting.\n"
+            "\n"
+            "Once your discount expires, it resets.\n"
+            "\n"
+            "Spin now. Save now ðŸ‘‡"
         ),
     ],
 }
 
 # ============================================================
-# SCHEDULE — 10 to 12 posts per day (08:00–23:00 EAT = 05:00–20:00 UTC)
+# SCHEDULE â€” 10 to 12 posts per day (08:00â€“23:00 EAT = 05:00â€“20:00 UTC)
 # ============================================================
 SCHEDULE_HOURS_UTC = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
 
@@ -479,7 +836,7 @@ def get_todays_schedule():
     return [(h, random.randint(0, 55)) for h in chosen]
 
 # ============================================================
-# DYNAMIC POSTS — day-aware and date-stamped
+# DYNAMIC POSTS â€” day-aware and date-stamped
 # ============================================================
 DAY_NAMES = {
     0: "Monday",
@@ -494,7 +851,7 @@ DAY_NAMES = {
 def get_dynamic_post() -> tuple[str, str] | None:
     """
     Returns a (service_key, text) dynamic post based on current day/date.
-    Returns None randomly — so dynamic posts appear ~2x per day in rotation.
+    Returns None randomly â€” so dynamic posts appear ~2x per day in rotation.
     """
     if random.random() > 0.25:  # 25% chance to return a dynamic post
         return None
@@ -516,21 +873,21 @@ def get_dynamic_post() -> tuple[str, str] | None:
     if is_weekend:
         DYNAMIC_POSTS += [
             (
-                f"📅 *{day_name} — {date_str}*\n\n"
-                "💰 *VIP members are making money this weekend.*\n\n"
+                f"ðŸ“… *{day_name} â€” {date_str}*\n\n"
+                "ðŸ’° *VIP members are making money this weekend.*\n\n"
                 "While the forex market rests...\n"
-                "Our *Social Trading* runs *Monday to Monday* — OTC included.\n\n"
+                "Our *Social Trading* runs *Monday to Monday* â€” OTC included.\n\n"
                 "The market never fully sleeps.\n"
-                "Neither do we. 🌙\n\n"
-                "Are you still on the outside? Join us now 👇"
+                "Neither do we. ðŸŒ™\n\n"
+                "Are you still on the outside? Join us now ðŸ‘‡"
             ),
             (
-                f"🗓 *Today is {day_name} — {date_str}*\n\n"
-                "Weekend is here — but profits don't wait.\n\n"
-                "✅ *Social Copy Trading* is LIVE — OTC markets open\n"
-                "✅ *Auto Trading Bot* is running — all brokers\n"
-                "✅ *VIP members* are already ahead of you\n\n"
-                "You can still join today 👇"
+                f"ðŸ—“ *Today is {day_name} â€” {date_str}*\n\n"
+                "Weekend is here â€” but profits don't wait.\n\n"
+                "âœ… *Social Copy Trading* is LIVE â€” OTC markets open\n"
+                "âœ… *Auto Trading Bot* is running â€” all brokers\n"
+                "âœ… *VIP members* are already ahead of you\n\n"
+                "You can still join today ðŸ‘‡"
             ),
         ]
 
@@ -538,22 +895,22 @@ def get_dynamic_post() -> tuple[str, str] | None:
     elif is_friday:
         DYNAMIC_POSTS += [
             (
-                f"🗓 *Today is Friday — {date_str}*\n\n"
-                "⚡ *Weekend is starting — are you ready?*\n\n"
+                f"ðŸ—“ *Today is Friday â€” {date_str}*\n\n"
+                "âš¡ *Weekend is starting â€” are you ready?*\n\n"
                 "VIP members already locked in profits this week.\n"
                 "Social Trading keeps running through the weekend.\n\n"
                 "Don't let another week pass without taking action.\n\n"
-                "Join now 👇"
+                "Join now ðŸ‘‡"
             ),
             (
-                f"📅 *Friday — {date_str}*\n\n"
-                "🏁 End of the trading week.\n\n"
+                f"ðŸ“… *Friday â€” {date_str}*\n\n"
+                "ðŸ End of the trading week.\n\n"
                 "This week our VIP members:\n"
-                "📈 Received 8–10 signals daily\n"
-                "✅ Non-Martingale — capital protected\n"
-                "💰 Consistent profits every session\n\n"
+                "ðŸ“ˆ Received 8â€“10 signals daily\n"
+                "âœ… Non-Martingale â€” capital protected\n"
+                "ðŸ’° Consistent profits every session\n\n"
                 "Next week starts Monday.\n"
-                "Will you be ready? Join before the weekend ends 👇"
+                "Will you be ready? Join before the weekend ends ðŸ‘‡"
             ),
         ]
 
@@ -561,12 +918,12 @@ def get_dynamic_post() -> tuple[str, str] | None:
     elif is_monday:
         DYNAMIC_POSTS += [
             (
-                f"📅 *Monday — {date_str}*\n\n"
-                "🔔 *New week. New signals. New profits.*\n\n"
+                f"ðŸ“… *Monday â€” {date_str}*\n\n"
+                "ðŸ”” *New week. New signals. New profits.*\n\n"
                 "VIP signals are LIVE from today.\n"
-                "8–10 signals per day, Monday to Friday.\n\n"
-                "If you missed last week — don't miss this one.\n\n"
-                "Join now 👇"
+                "8â€“10 signals per day, Monday to Friday.\n\n"
+                "If you missed last week â€” don't miss this one.\n\n"
+                "Join now ðŸ‘‡"
             ),
         ]
 
@@ -574,24 +931,24 @@ def get_dynamic_post() -> tuple[str, str] | None:
     else:
         DYNAMIC_POSTS += [
             (
-                f"📅 *{day_name} — {date_str}*\n\n"
-                "⚡ *VIP signals are running RIGHT NOW.*\n\n"
+                f"ðŸ“… *{day_name} â€” {date_str}*\n\n"
+                "âš¡ *VIP signals are running RIGHT NOW.*\n\n"
                 "While you're reading this, our members are:\n"
-                "📈 Following live signals\n"
-                "✅ Booking profits\n"
-                "🤖 Running auto bots on all brokers\n\n"
+                "ðŸ“ˆ Following live signals\n"
+                "âœ… Booking profits\n"
+                "ðŸ¤– Running auto bots on all brokers\n\n"
                 "You're still on the outside.\n"
-                "Fix that today 👇"
+                "Fix that today ðŸ‘‡"
             ),
             (
-                f"🗓 *{day_name} — {date_str}*\n\n"
-                "💎 *Another trading day. Another opportunity.*\n\n"
+                f"ðŸ—“ *{day_name} â€” {date_str}*\n\n"
+                "ðŸ’Ž *Another trading day. Another opportunity.*\n\n"
                 "EVALON VIP members get:\n"
-                "📊 8–10 clean signals today\n"
-                "🎯 Non-Martingale only\n"
-                "📲 Results after every trade\n\n"
+                "ðŸ“Š 8â€“10 clean signals today\n"
+                "ðŸŽ¯ Non-Martingale only\n"
+                "ðŸ“² Results after every trade\n\n"
                 "Today's session is already running.\n"
-                "Don't miss tomorrow's — join now 👇"
+                "Don't miss tomorrow's â€” join now ðŸ‘‡"
             ),
         ]
 
@@ -602,34 +959,63 @@ def get_dynamic_post() -> tuple[str, str] | None:
     return "vip_signals", text  # dynamic posts use VIP keyboard
 
 
+def get_date_header() -> str:
+    """Returns a date header like: ðŸ“… *Thursday, 04 June 2025*"""
+    now = datetime.now(timezone.utc)
+    return f"ðŸ“… *{now.strftime('%A, %d %B %Y')}*\n\n"
+
+
+def post_used_key(service: str) -> str:
+    return f"used_posts_{service}"
+
+
+def pick_unused_post(service: str) -> str:
+    """Cycle through all posts before repeating any."""
+    posts = POSTS[service]
+    key   = post_used_key(service)
+    used  = db_get(key, [])
+
+    all_indexes = list(range(len(posts)))
+    remaining   = [i for i in all_indexes if i not in used]
+
+    if not remaining:
+        used      = []
+        remaining = all_indexes
+
+    chosen = random.choice(remaining)
+    used.append(chosen)
+    db_set(key, used)
+    return posts[chosen]
+
+
 def pick_post(avoid_services: list = None):
-    """Pick a post — avoid services already posted today."""
+    """Pick a post â€” avoid services already posted today, no repeated posts."""
     avoid = set(avoid_services or [])
 
-    # Try dynamic post first (~25% chance)
     dynamic = get_dynamic_post()
     if dynamic and dynamic[0] not in avoid:
-        return dynamic
+        service, text = dynamic
+        return service, get_date_header() + text
 
-    # Pick from static posts — avoid already-used services if possible
     available = [s for s in POSTS.keys() if s not in avoid]
     if not available:
-        available = list(POSTS.keys())  # all services used today — reset
+        available = list(POSTS.keys())
 
     service = random.choice(available)
-    return service, random.choice(POSTS[service])
+    text    = pick_unused_post(service)
+    return service, get_date_header() + text
 
 # ============================================================
-# MEDIA STORAGE — DB-backed (replaces static VIDEO_FILE_IDS)
+# MEDIA STORAGE â€” DB-backed (replaces static VIDEO_FILE_IDS)
 # ============================================================
 SERVICES = ["vip_signals", "auto_trading_bot", "social_trading", "manual_bot", "indicators", "spin_invite"]
 SERVICE_LABELS = {
-    "vip_signals":      "👑 VIP Signals",
-    "auto_trading_bot": "🤖 Auto Trading Bot",
-    "social_trading":   "✨ Social Copy Trading",
-    "manual_bot":       "🎁 Manual Bot",
-    "indicators":       "📊 Indicators",
-    "spin_invite":      "🎰 Spin & Invite",
+    "vip_signals":      "ðŸ‘‘ VIP Signals",
+    "auto_trading_bot": "ðŸ¤– Auto Trading Bot",
+    "social_trading":   "âœ¨ Social Copy Trading",
+    "manual_bot":       "ðŸŽ Manual Bot",
+    "indicators":       "ðŸ“Š Indicators",
+    "spin_invite":      "ðŸŽ° Spin & Invite",
 }
 
 def media_load() -> dict:
@@ -677,7 +1063,7 @@ async def send_post(bot: Bot, service: str, text: str, keyboard: InlineKeyboardM
         try:
             if item["type"] == "video":
                 # Watermark on video caption
-                cap = text + f"\n\n📹 {WATERMARK_TEXT}"
+                cap = text + f"\n\nðŸ“¹ {WATERMARK_TEXT}"
                 await bot.send_video(
                     chat_id=CHANNEL_ID,
                     video=item["file_id"],
@@ -710,7 +1096,7 @@ async def send_post(bot: Bot, service: str, text: str, keyboard: InlineKeyboardM
     )
 
 # ============================================================
-# /addmedia — admin sends video/photo + selects service
+# /addmedia â€” admin sends video/photo + selects service
 # ============================================================
 async def cmd_addmedia(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID: return
@@ -718,9 +1104,9 @@ async def cmd_addmedia(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [[InlineKeyboardButton(label, callback_data=f"addmedia_wait_{svc}")]
                for svc, label in SERVICE_LABELS.items()]
     await update.message.reply_text(
-        "📎 *Add Media*\n\nWhich service is this video/photo for?\n\n"
-        "1️⃣ Select the service below\n"
-        "2️⃣ Then send the video or photo",
+        "ðŸ“Ž *Add Media*\n\nWhich service is this video/photo for?\n\n"
+        "1ï¸âƒ£ Select the service below\n"
+        "2ï¸âƒ£ Then send the video or photo",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(buttons)
     )
@@ -729,15 +1115,15 @@ async def cmd_listmedia(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID: return
     store = media_load()
     if not any(store.values()):
-        await update.message.reply_text("📭 No media saved yet.\nUse /addmedia to add."); return
+        await update.message.reply_text("ðŸ“­ No media saved yet.\nUse /addmedia to add."); return
 
-    lines = ["🗂 *SAVED MEDIA*\n"]
+    lines = ["ðŸ—‚ *SAVED MEDIA*\n"]
     for svc, items in store.items():
         if not items: continue
         label = SERVICE_LABELS.get(svc, svc)
-        lines.append(f"{label} — *{len(items)} file(s)*")
+        lines.append(f"{label} â€” *{len(items)} file(s)*")
         for i, m in enumerate(items):
-            lines.append(f"  `{i}` — {m['type']}")
+            lines.append(f"  `{i}` â€” {m['type']}")
     lines.append("\n_Use /removemedia to delete_")
     await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
 
@@ -747,12 +1133,12 @@ async def cmd_removemedia(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = []
     for svc, items in store.items():
         for i, m in enumerate(items):
-            label = f"{SERVICE_LABELS.get(svc, svc)} — {m['type']} #{i}"
-            buttons.append([InlineKeyboardButton(f"🗑 {label}", callback_data=f"removemedia_{svc}_{i}")])
+            label = f"{SERVICE_LABELS.get(svc, svc)} â€” {m['type']} #{i}"
+            buttons.append([InlineKeyboardButton(f"ðŸ—‘ {label}", callback_data=f"removemedia_{svc}_{i}")])
     if not buttons:
-        await update.message.reply_text("📭 No media to remove."); return
+        await update.message.reply_text("ðŸ“­ No media to remove."); return
     await update.message.reply_text(
-        "🗑 *Remove Media*\n\nSelect item to remove:",
+        "ðŸ—‘ *Remove Media*\n\nSelect item to remove:",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(buttons)
     )
@@ -773,7 +1159,7 @@ async def handle_addmedia_callback(update: Update, context: ContextTypes.DEFAULT
         context.user_data["addmedia_service"] = service
         label = SERVICE_LABELS.get(service, service)
         await q.edit_message_text(
-            f"✅ *{label}* selected.\n\n"
+            f"âœ… *{label}* selected.\n\n"
             "Now send me the *video or photo* to attach to this service.\n\n"
             "_It will be saved and used automatically in future auto-posts._",
             parse_mode="Markdown"
@@ -783,7 +1169,7 @@ async def handle_addmedia_callback(update: Update, context: ContextTypes.DEFAULT
         parts   = data.split("_", 2)
         # removemedia_{service}_{index}
         _, svc, idx_str = data.split("_", 2)
-        # svc might have underscores — handle carefully
+        # svc might have underscores â€” handle carefully
         # format: removemedia_{svc}_{i}
         last_underscore = data.rfind("_")
         idx_str = data[last_underscore+1:]
@@ -792,19 +1178,19 @@ async def handle_addmedia_callback(update: Update, context: ContextTypes.DEFAULT
             idx = int(idx_str)
             if media_remove(svc, idx):
                 label = SERVICE_LABELS.get(svc, svc)
-                await q.edit_message_text(f"🗑 Removed media #{idx} from *{label}*", parse_mode="Markdown")
+                await q.edit_message_text(f"ðŸ—‘ Removed media #{idx} from *{label}*", parse_mode="Markdown")
             else:
-                await q.edit_message_text("⚠️ Item not found.")
-        except: await q.edit_message_text("⚠️ Error removing media.")
+                await q.edit_message_text("âš ï¸ Item not found.")
+        except: await q.edit_message_text("âš ï¸ Error removing media.")
 
 
 async def handle_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Admin sends message → channel with buttons. Also handles addmedia flow."""
+    """Admin sends message â†’ channel with buttons. Also handles addmedia flow."""
     if update.effective_user.id != ADMIN_ID: return
 
     msg = update.message
 
-    # ── ADDMEDIA FLOW ──
+    # â”€â”€ ADDMEDIA FLOW â”€â”€
     if context.user_data.get("addmedia_service") and (msg.photo or msg.video):
         service    = context.user_data.pop("addmedia_service")
         label      = SERVICE_LABELS.get(service, service)
@@ -816,14 +1202,14 @@ async def handle_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
             media_type = "photo"
         media_add(service, file_id, media_type)
         await msg.reply_text(
-            f"✅ *{media_type.capitalize()} saved for {label}!*\n\n"
+            f"âœ… *{media_type.capitalize()} saved for {label}!*\n\n"
             f"It will now be attached to auto-posts for this service.\n"
             f"Use /listmedia to see all saved media.",
             parse_mode="Markdown"
         )
         return
 
-    # ── BROADCAST FLOW ──
+    # â”€â”€ BROADCAST FLOW â”€â”€
     kb = make_broadcast_keyboard()
     try:
         if msg.photo:
@@ -835,7 +1221,7 @@ async def handle_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 caption=msg.caption or "", parse_mode="Markdown", reply_markup=kb
             )
         elif msg.video:
-            cap = (msg.caption or "") + f"\n\n📹 {WATERMARK_TEXT}"
+            cap = (msg.caption or "") + f"\n\nðŸ“¹ {WATERMARK_TEXT}"
             await context.bot.send_video(
                 chat_id=CHANNEL_ID, video=msg.video.file_id,
                 caption=cap.strip(), parse_mode="Markdown", reply_markup=kb
@@ -851,48 +1237,48 @@ async def handle_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 parse_mode="Markdown", reply_markup=kb, disable_web_page_preview=True
             )
         else:
-            await msg.reply_text("⚠️ Unsupported message type."); return
+            await msg.reply_text("âš ï¸ Unsupported message type."); return
 
-        await msg.reply_text("✅ *Sent to channel!*", parse_mode="Markdown")
+        await msg.reply_text("âœ… *Sent to channel!*", parse_mode="Markdown")
         logger.info("Admin broadcast sent to channel")
 
     except Exception as e:
-        await msg.reply_text(f"❌ Failed: {e}")
+        await msg.reply_text(f"âŒ Failed: {e}")
         logger.error(f"Broadcast failed: {e}")
 
 async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID: return
     await update.message.reply_text(
-        "📡 *EVALON AUTOPOST BOT v3*\n"
-        "━━━━━━━━━━━━━━\n\n"
-        "🤖 *AUTO-POSTING*\n"
-        "Posts 10–12x daily (08:00–23:00 EAT) automatically.\n"
+        "ðŸ“¡ *EVALON AUTOPOST BOT v3*\n"
+        "â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n\n"
+        "ðŸ¤– *AUTO-POSTING*\n"
+        "Posts 10â€“12x daily (08:00â€“23:00 EAT) automatically.\n"
         "Rotates across 6 services. No duplicates per day.\n\n"
-        "📣 *BROADCAST (Manual Post)*\n"
-        "Send any message here → goes to channel with buttons.\n"
+        "ðŸ“£ *BROADCAST (Manual Post)*\n"
+        "Send any message here â†’ goes to channel with buttons.\n"
         "Supports: Text, Photo, Video, GIF\n"
         "Photos get watermark automatically.\n\n"
-        "━━━━━━━━━━━━━━\n"
-        "⚙️ *BOT CONTROLS*\n"
-        "`/pause` — Stop auto-posting\n"
-        "`/resume` — Resume auto-posting\n"
-        "`/status` — Current bot status\n"
-        "`/schedule` — Today's post times\n"
-        "`/history` — Last 10 posts sent\n\n"
-        "━━━━━━━━━━━━━━\n"
-        "📎 *MEDIA (Video/Photo per service)*\n"
+        "â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n"
+        "âš™ï¸ *BOT CONTROLS*\n"
+        "`/pause` â€” Stop auto-posting\n"
+        "`/resume` â€” Resume auto-posting\n"
+        "`/status` â€” Current bot status\n"
+        "`/schedule` â€” Today's post times\n"
+        "`/history` â€” Last 10 posts sent\n\n"
+        "â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n"
+        "ðŸ“Ž *MEDIA (Video/Photo per service)*\n"
         "`/addmedia`\n"
-        "  1️⃣ Tap the service name\n"
-        "  2️⃣ Send the video or photo\n"
-        "  ✅ Saved — used in auto-posts automatically\n\n"
-        "`/listmedia` — See all saved media\n"
-        "`/removemedia` — Delete a saved media file\n\n"
-        "━━━━━━━━━━━━━━\n"
-        "🖼 *WATERMARK*\n"
-        "All photos → `EVALON WINNERS BOT` diagonal\n"
-        "All videos → watermark in caption\n\n"
-        "━━━━━━━━━━━━━━\n"
-        "💬 *BUTTONS ON EVERY POST*\n"
+        "  1ï¸âƒ£ Tap the service name\n"
+        "  2ï¸âƒ£ Send the video or photo\n"
+        "  âœ… Saved â€” used in auto-posts automatically\n\n"
+        "`/listmedia` â€” See all saved media\n"
+        "`/removemedia` â€” Delete a saved media file\n\n"
+        "â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n"
+        "ðŸ–¼ *WATERMARK*\n"
+        "All photos â†’ `EVALON WINNERS BOT` diagonal\n"
+        "All videos â†’ watermark in caption\n\n"
+        "â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n"
+        "ðŸ’¬ *BUTTONS ON EVERY POST*\n"
         "Each post has 3 buttons linking to your 3 bots.",
         parse_mode="Markdown"
     )
@@ -900,12 +1286,12 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def cmd_pause(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID: return
     db_set("paused", True)
-    await update.message.reply_text("⏸ *Auto-posting paused.*\nUse /resume to restart.", parse_mode="Markdown")
+    await update.message.reply_text("â¸ *Auto-posting paused.*\nUse /resume to restart.", parse_mode="Markdown")
 
 async def cmd_resume(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID: return
     db_set("paused", False)
-    await update.message.reply_text("▶️ *Auto-posting resumed!*", parse_mode="Markdown")
+    await update.message.reply_text("â–¶ï¸ *Auto-posting resumed!*", parse_mode="Markdown")
 
 async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID: return
@@ -914,12 +1300,12 @@ async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     now         = datetime.now(timezone.utc)
     eat_time    = f"{(now.hour+3)%24:02d}:{now.minute:02d} EAT"
     await update.message.reply_text(
-        f"📊 *AUTOPOST BOT STATUS*\n\n"
-        f"{'⏸ PAUSED' if paused else '▶️ RUNNING'}\n"
-        f"🕐 Time: {eat_time}\n"
-        f"📬 Posts today: *{len(todays)}*\n"
-        f"🗂 Services posted: {', '.join(set(todays)) or 'none'}\n"
-        f"💾 DB: {'✅ PostgreSQL' if DATABASE_URL else '⚠️ Local'}",
+        f"ðŸ“Š *AUTOPOST BOT STATUS*\n\n"
+        f"{'â¸ PAUSED' if paused else 'â–¶ï¸ RUNNING'}\n"
+        f"ðŸ• Time: {eat_time}\n"
+        f"ðŸ“¬ Posts today: *{len(todays)}*\n"
+        f"ðŸ—‚ Services posted: {', '.join(set(todays)) or 'none'}\n"
+        f"ðŸ’¾ DB: {'âœ… PostgreSQL' if DATABASE_URL else 'âš ï¸ Local'}",
         parse_mode="Markdown"
     )
 
@@ -927,16 +1313,16 @@ async def cmd_history(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID: return
     hist = db_get_history(limit=10)
     if not hist:
-        await update.message.reply_text("📭 No post history yet."); return
+        await update.message.reply_text("ðŸ“­ No post history yet."); return
 
     SERVICE_EMOJI = {
-        "vip_signals": "👑", "auto_trading_bot": "🤖", "social_trading": "✨",
-        "manual_bot": "🎁", "indicators": "📊", "spin_invite": "🎰",
+        "vip_signals": "ðŸ‘‘", "auto_trading_bot": "ðŸ¤–", "social_trading": "âœ¨",
+        "manual_bot": "ðŸŽ", "indicators": "ðŸ“Š", "spin_invite": "ðŸŽ°",
     }
-    lines = ["📋 *LAST 10 POSTS*\n"]
+    lines = ["ðŸ“‹ *LAST 10 POSTS*\n"]
     for h in hist:
         svc     = h.get("service", "?")
-        emoji   = SERVICE_EMOJI.get(svc, "📌")
+        emoji   = SERVICE_EMOJI.get(svc, "ðŸ“Œ")
         preview = h.get("preview") or h.get("text_preview", "")[:60]
         posted  = h.get("posted_at", "")
         if hasattr(posted, "strftime"):
@@ -946,7 +1332,7 @@ async def cmd_history(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 dt = datetime.fromisoformat(str(posted).replace("Z",""))
                 t  = f"{(dt.hour+3)%24:02d}:{dt.minute:02d} EAT"
             except: t = str(posted)[:16]
-        lines.append(f"{emoji} *{svc}* — {t}\n_{preview[:70]}..._\n")
+        lines.append(f"{emoji} *{svc}* â€” {t}\n_{preview[:70]}..._\n")
 
     await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
 
@@ -957,13 +1343,13 @@ async def cmd_schedule(update: Update, context: ContextTypes.DEFAULT_TYPE):
     todays   = db_get_todays_posts()
     eat_now  = (now.hour + 3) % 24
 
-    lines = [f"🗓 *TODAY'S SCHEDULE — {now.strftime('%d %b %Y')}*\n"]
+    lines = [f"ðŸ—“ *TODAY'S SCHEDULE â€” {now.strftime('%d %b %Y')}*\n"]
     for i, (h, m) in enumerate(sched):
         eat_h  = (h + 3) % 24
-        status = "✅ Done" if i < len(todays) else ("🔄 Next" if eat_h == eat_now else "⏳ Pending")
-        lines.append(f"`{eat_h:02d}:{m:02d} EAT` — {status}")
+        status = "âœ… Done" if i < len(todays) else ("ðŸ”„ Next" if eat_h == eat_now else "â³ Pending")
+        lines.append(f"`{eat_h:02d}:{m:02d} EAT` â€” {status}")
 
-    lines.append(f"\n📬 Sent: *{len(todays)}/{len(sched)}*")
+    lines.append(f"\nðŸ“¬ Sent: *{len(todays)}/{len(sched)}*")
     await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
 
 # ============================================================
@@ -980,7 +1366,7 @@ async def autopost_loop(bot: Bot):
 
         # Check if paused
         if db_get("paused", False):
-            logger.info("Bot is paused — sleeping 5 min")
+            logger.info("Bot is paused â€” sleeping 5 min")
             await asyncio.sleep(300)
             continue
 
@@ -1005,9 +1391,9 @@ async def autopost_loop(bot: Bot):
             try:
                 await send_post(bot, service, text)
                 db_log_post(service, text)
-                logger.info(f"✅ Auto-posted [{service}] {now.strftime('%H:%M UTC')}")
+                logger.info(f"âœ… Auto-posted [{service}] {now.strftime('%H:%M UTC')}")
             except Exception as e:
-                logger.error(f"❌ Auto-post failed: {e}")
+                logger.error(f"âŒ Auto-post failed: {e}")
 
             slot_index += 1
             await asyncio.sleep(60)
