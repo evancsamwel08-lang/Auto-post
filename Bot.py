@@ -370,7 +370,7 @@ POSTS = {
             "Let the bot trade while you live your life."
         ),
         (
-            "âš™ï¸ TRADE AUTOMATICALLY WITH EVALON BOT\n\n"
+            "ðŸ”§ TRADE AUTOMATICALLY WITH EVALON BOT\n\n"
             "No screen time needed.\n\n"
             "ðŸ¤– Fully automated trading\n"
             "ðŸ”’ Stop Loss protection\n"
@@ -448,7 +448,7 @@ POSTS = {
             "All brokers supported. Start today ðŸ‘‡"
         ),
         (
-            "âš™ï¸ Setup takes less than 5 minutes.\n"
+            "ðŸ”§ Setup takes less than 5 minutes.\n"
             "\n"
             "1ï¸âƒ£ Open the bot\n"
             "2ï¸âƒ£ Connect your broker\n"
@@ -1259,7 +1259,7 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Supports: Text, Photo, Video, GIF\n"
         "Photos get watermark automatically.\n\n"
         "- - - - - - - - -\n"
-        "âš™ï¸ BOT CONTROLS\n"
+        "ðŸ”§ BOT CONTROLS\n"
         "/pause - Stop auto-posting\n"
         "/resume - Resume auto-posting\n"
         "/status - Current bot status\n"
@@ -1290,7 +1290,7 @@ async def cmd_pause(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def cmd_resume(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID: return
     db_set("paused", False)
-    await update.message.reply_text("â–¶ï¸ Auto-posting resumed!")
+    await update.message.reply_text("â–¶ Auto-posting resumed!")
 
 async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID: return
@@ -1300,7 +1300,7 @@ async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     eat_time    = f"{(now.hour+3)%24:02d}:{now.minute:02d} EAT"
     await update.message.reply_text(
         f"ðŸ“Š AUTOPOST BOT STATUS\n\n"
-        f"{'â¸ PAUSED' if paused else 'â–¶ï¸ RUNNING'}\n"
+        f"{'â¸ PAUSED' if paused else 'â–¶ RUNNING'}\n"
         f"ðŸ• Time: {eat_time}\n"
         f"ðŸ“¬ Posts today: {len(todays)}\n"
         f"ðŸ—‚ Services posted: {', '.join(set(todays)) or 'none'}\n"
