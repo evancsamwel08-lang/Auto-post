@@ -856,12 +856,13 @@ def get_dynamic_post() -> tuple[str, str] | None:
     if random.random() > 0.25:  # 25% chance to return a dynamic post
         return None
 
+    from datetime import timedelta
     now     = datetime.now(timezone.utc)
-    # Convert UTC to EAT (UTC+3)
-    eat_hour = (now.hour + 3) % 24
-    weekday  = now.weekday()  # 0=Monday, 6=Sunday
+    eat     = now + timedelta(hours=3)  # EAT = UTC+3
+    weekday  = eat.weekday()  # 0=Monday, 6=Sunday
+    eat_hour = eat.hour
     day_name = DAY_NAMES[weekday]
-    date_str = now.strftime("%d %B %Y")  # e.g. "24 May 2025"
+    date_str = eat.strftime("%d %B %Y")  # e.g. "24 May 2025"
 
     is_weekend  = weekday >= 5  # Saturday or Sunday
     is_friday   = weekday == 4
@@ -960,9 +961,10 @@ def get_dynamic_post() -> tuple[str, str] | None:
 
 
 def get_date_header() -> str:
-    """Returns a date header like: ðŸ“… <b>Thursday, 04 June 2025</b>"""
-    now = datetime.now(timezone.utc)
-    return f"ðŸ“… <b>{now.strftime('%A, %d %B %Y')}</b>\n\n"
+    """Returns date header in EAT timezone (UTC+3)."""
+    from datetime import timedelta
+    eat = datetime.now(timezone.utc) + timedelta(hours=3)
+    return f"ðŸ“… <b>{eat.strftime('%A, %d %B %Y')}</b>\n\n"
 
 
 def post_used_key(service: str) -> str:
@@ -1250,36 +1252,36 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID: return
     await update.message.reply_text(
         "ðŸ“¡ <b>EVALON AUTOPOST BOT v3</b>\n"
-        "â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n\n"
+        "â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€\n\n"
         "ðŸ¤– <b>AUTO-POSTING</b>\n"
-        "Posts 10â€“12x daily (08:00â€“23:00 EAT) automatically.\n"
+        "Posts 10-12x daily (08:00-23:00 EAT) automatically.\n"
         "Rotates across 6 services. No duplicates per day.\n\n"
         "ðŸ“£ <b>BROADCAST (Manual Post)</b>\n"
-        "Send any message here â†’ goes to channel with buttons.\n"
+        "Send any message here - goes to channel with buttons.\n"
         "Supports: Text, Photo, Video, GIF\n"
         "Photos get watermark automatically.\n\n"
-        "â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n"
+        "â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€\n"
         "âš™ï¸ <b>BOT CONTROLS</b>\n"
-        "`/pause` â€” Stop auto-posting\n"
-        "`/resume` â€” Resume auto-posting\n"
-        "`/status` â€” Current bot status\n"
-        "`/schedule` â€” Today's post times\n"
-        "`/history` â€” Last 10 posts sent\n\n"
-        "â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n"
+        "/pause - Stop auto-posting\n"
+        "/resume - Resume auto-posting\n"
+        "/status - Current bot status\n"
+        "/schedule - Today's post times\n"
+        "/history - Last 10 posts sent\n\n"
+        "â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€\n"
         "ðŸ“Ž <b>MEDIA (Video/Photo per service)</b>\n"
-        "`/addmedia`\n"
-        "  1ï¸âƒ£ Tap the service name\n"
-        "  2ï¸âƒ£ Send the video or photo\n"
-        "  âœ… Saved â€” used in auto-posts automatically\n\n"
-        "`/listmedia` â€” See all saved media\n"
-        "`/removemedia` â€” Delete a saved media file\n\n"
-        "â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n"
+        "/addmedia\n"
+        "  1 - Tap the service name\n"
+        "  2 - Send the video or photo\n"
+        "  Saved - used in auto-posts automatically\n\n"
+        "/listmedia - See all saved media\n"
+        "/removemedia - Delete a saved media file\n\n"
+        "â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€\n"
         "ðŸ–¼ <b>WATERMARK</b>\n"
-        "All photos â†’ `EVALON WINNERS BOT` diagonal\n"
-        "All videos â†’ watermark in caption\n\n"
-        "â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n"
+        "All photos: EVALON WINNERS BOT diagonal\n"
+        "All videos: watermark in caption\n\n"
+        "â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€\n"
         "ðŸ’¬ <b>BUTTONS ON EVERY POST</b>\n"
-        "Each post has 3 buttons linking to your 3 bots.",
+        "Each post has 1 button per service linking to @evalonwinnersbot.",
         parse_mode="HTML"
     )
 
