@@ -1497,12 +1497,12 @@ async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     now         = datetime.now(timezone.utc)
     eat_time    = f"{(now.hour+3)%24:02d}:{now.minute:02d} EAT"
     await update.message.reply_text(
-        f"\U0001f4ca AUTOPOST BOT STATUS\n\n"
-        f"{'\u23f8 PAUSED' if paused else '\u25b6 RUNNING'}\n"
-        f"\U0001f550 Time: {eat_time}\n"
-        f"\U0001f4ec Posts today: {len(todays)}\n"
-        f"\U0001f5c2 Services posted: {', '.join(set(todays)) or 'none'}\n"
-        f"\U0001f4be DB: {'\u2705 PostgreSQL' if DATABASE_URL else '\u26a0️ Local'}",
+        "\U0001f4ca AUTOPOST BOT STATUS\n\n"
+        + ("\u23f8 PAUSED" if paused else "\u25b6 RUNNING") + "\n"
+        + f"\U0001f550 Time: {eat_time}\n"
+        + f"\U0001f4ec Posts today: {len(todays)}\n"
+        + f"\U0001f5c2 Services posted: {', '.join(set(todays)) or 'none'}\n"
+        + ("\U0001f4be DB: \u2705 PostgreSQL" if DATABASE_URL else "\U0001f4be DB: \u26a0 Local"),
     )
 
 async def cmd_history(update: Update, context: ContextTypes.DEFAULT_TYPE):
