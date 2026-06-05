@@ -875,10 +875,12 @@ POSTS = {
 SCHEDULE_HOURS_UTC = [23, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
 
 def get_todays_schedule():
-    """10-12 posts spread randomly across 20 hours (02:00-22:00 EAT)."""
+    """10-12 posts spread randomly — ONE post per chosen hour (02:00-22:00 EAT)."""
     count  = random.randint(10, 12)
+    # Pick 10-12 distinct hours from the 20-hour window
     chosen = sorted(random.sample(SCHEDULE_HOURS_UTC, min(count, len(SCHEDULE_HOURS_UTC))))
-    return [(h, random.randint(0, 55)) for h in chosen]
+    # One post per hour at a random minute — guarantees spacing
+    return [(h, random.randint(5, 55)) for h in chosen]
 
 # ============================================================
 # DYNAMIC POSTS \u2014 day-aware and date-stamped
