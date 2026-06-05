@@ -12,7 +12,7 @@ import os, random, asyncio, logging, threading, io, json
 from datetime import datetime, timezone, timedelta, date
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import Application, MessageHandler, CommandHandler, filters, ContextTypes
+from telegram.ext import Application, MessageHandler, CommandHandler, CallbackQueryHandler, filters, ContextTypes
 from PIL import Image, ImageDraw, ImageFont
 
 try:
@@ -1678,7 +1678,6 @@ async def main_async():
     app.add_handler(CommandHandler("removemedia", cmd_removemedia))
     app.add_handler(CommandHandler("addlink",      cmd_addlink))
     app.add_handler(CallbackQueryHandler(cb_addlink_service, pattern="^addlink_"))
-    from telegram.ext import CallbackQueryHandler
     app.add_handler(CallbackQueryHandler(handle_addmedia_callback,
                                          pattern="^(addmedia_wait_|removemedia_)"))
     app.add_handler(MessageHandler(
