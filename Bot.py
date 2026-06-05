@@ -1450,7 +1450,7 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "\U0001f4e1 EVALON AUTOPOST BOT v3\n"
         "- - - - - - - - -\n\n"
         "\U0001f916 AUTO-POSTING\n"
-        "Posts 10-12x daily (08:00-23:00 EAT) automatically.\n"
+        "Posts 10-12x daily (02:00-22:00 EAT) automatically.\n"
         "Rotates across 6 services. No duplicates per day.\n\n"
         "\U0001f4e3 BROADCAST (Manual Post)\n"
         "Send any message here - goes to channel with buttons.\n"
@@ -1474,7 +1474,7 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "- - - - - - - - -\n"
         "\U0001f5bc WATERMARK\n"
         "All photos: EVALON WINNERS BOT diagonal\n"
-        "All videos: watermark in caption\n\n"
+        "All videos: watermark burned on video\n\n"
         "- - - - - - - - -\n"
         "\U0001f4ac BUTTONS ON EVERY POST\n"
         "Each post has 1 button per service linking to @evalonwinnersbot.\n\n""- - - - - - - - -\n""LINK POSTS\n""/addlink\n""  Write title/description + URL (YouTube, TikTok, etc)\n""  Bot posts with link preview + open button",
